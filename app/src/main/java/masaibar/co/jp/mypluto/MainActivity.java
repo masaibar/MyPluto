@@ -49,6 +49,8 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+        //未ログインだったらログイン画面に遷移させられないだろうか
+
         sendNotification();
     }
     //戻るボタンの挙動をOverride
@@ -56,7 +58,9 @@ public class MainActivity extends ActionBarActivity {
     public void onBackPressed() {
         if (webView.canGoBack()) {
             webView.goBack();
+            return;
         }
+        super.onBackPressed();
     }
 
     @Override
@@ -83,6 +87,10 @@ public class MainActivity extends ActionBarActivity {
 
     //あとで切り離す
     public void sendNotification() {
+        //Intentの生成
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 , intent, 0);
+
         //Notificationインスタンスの生成
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 
@@ -94,10 +102,11 @@ public class MainActivity extends ActionBarActivity {
         builder.setContentTitle("Plutoで家電を操作しますか？");
         builder.setContentText("こちらから開けます");
 
-        //Intentの生成
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0 , intent, 0);
-        builder.setContentIntent(contentIntent);
+        builder.addAction(R.drawable.ic_launcher, "開く", pendingIntent);
+        builder.addAction(R.drawable.ic_launcher, "あとで", pendingIntent);
+        builder.addAction(R.drawable.ic_launcher, "だまれ", pendingIntent);
+
+        builder.setContentIntent(pendingIntent);
         builder.setWhen(System.currentTimeMillis());
         //通知エリアに残す
         builder.setAutoCancel(false);
