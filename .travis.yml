@@ -18,7 +18,7 @@ android:
     - 'android-sdk-license-.+'
 
 script:
-  - ./gradlew assembleDebug
+  - ./gradlew build
 
 after_success: 
   - curl -F "file=@./app/app-debug-unaligned.apk" -F "token=${DEPLOYGATE_TOKEN}" -F "message=from travis build_${TRAVIS_BUILD_NUMBER}" https://deploygate.com/api/users/masaibar/apps
