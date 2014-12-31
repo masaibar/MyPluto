@@ -25,7 +25,3 @@ after_success:
   - ls -l *
   - ls -l app
   - ls -l */*/*
-
-script:
-  - echo 'hello world!'
-
