@@ -19,8 +19,4 @@ notifications:
   email: false
 
 after_success:
-  - curl -F "file=@./app/build/outputs/apk/app-debug-unaligned.apk" -F "token=${DEPLOYGATE_TOKEN}" -F "message=from travis build_${TRAVIS_BUILD_NUMBER}" https://deploygate.com/api/users/masaibar/apps
-  - pwd
-  - find ../ -name '*.apk'
-  - ls -l app
-  - echo ${TRAVIS_BUILD_DIR}
+  - curl -F "file=@${TRAVIS_BUILD_DIR}/app/build/outputs/apk/app-debug-unaligned.apk" -F "token=${DEPLOYGATE_TOKEN}" -F "message=from travis build_${TRAVIS_BUILD_NUMBER}" https://deploygate.com/api/users/masaibar/apps
