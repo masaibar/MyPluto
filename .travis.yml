@@ -9,6 +9,7 @@ android:
     - 'android-sdk-license-.+'
 
 script:
+  - ./gradlew clean build
   - ./gradlew assembleDebug
 
 env:
