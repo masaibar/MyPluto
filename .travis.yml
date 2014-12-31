@@ -9,12 +9,13 @@ language:  android
 
 android:
   components:
-    - build-tools-21.0.0
-    - android-21
-    - sysimg-21
+    - build-tools-19.0.3
+    - android-19
+    - sysimg-19
     - extra-android-support
   licenses:
     - 'android-sdk-license-.+'
+    - android-sdk-license-bcbbd656
 
 script:
   - ./gradlew assembleDebug
