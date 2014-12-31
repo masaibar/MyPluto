@@ -9,14 +9,15 @@ language:  android
 
 android:
   components:
-    - build-tools-21.1.2
+    - build-tools-21.0.0
     - android-21
     - sysimg-21
     - extra-android-support
   licenses:
     - 'android-sdk-license-.+'
-  script:
-    - ./gradlew assembleDebug
+
+script:
+  - ./gradlew assembleDebug
 
 after_success: 
   - curl -F "file=@./app/build/outputs/apk/app-debug-unaligned.apk" -F "token=${DEPLOYGATE_TOKEN}" -F "message=from travis build_${TRAVIS_BUILD_NUMBER}" https://deploygate.com/api/users/masaibar/apps
