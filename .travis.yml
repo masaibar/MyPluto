@@ -5,7 +5,11 @@ env:
   global:
      - secure: "erqfKI/mGA+FJ4KsZ01wHDegBDCk6KkWy4er3jgdVkftoBxUXLdbOEkHASG6j1H/F7vII6TZoOEaFRr9Da7xQ0AOgusFBuefq+6WOqSvfSgifvFDmK6GJq4/EO4GNaiOSr6hoH0IVo1Z8jWYNtiXkN82BgFGZKxx4HHq02AxI3I="
 
+notifications:
+  email: false
+
 language:  android
+
 android:
   components:
     - build-tools-21.1.2
@@ -18,5 +22,5 @@ android:
     - ./gradlew assembleDebug
 
 after_success: 
-  - curl -F "file=@./app/build/outputs/apk/app-debug-unaligned.apk" -F "token=${DEPLOYGATE_TOKEN}" -F "message=from travis build_${TRAVIS_BUILD_NUMBER}" https://deploygate.com/api/users/masaibar/apps
+  - bash -x curl -F "file=@./app/build/outputs/apk/app-debug-unaligned.apk" -F "token=${DEPLOYGATE_TOKEN}" -F "message=from travis build_${TRAVIS_BUILD_NUMBER}" https://deploygate.com/api/users/masaibar/apps
 
