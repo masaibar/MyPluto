@@ -1,10 +1,3 @@
-env:
-  global:
-     - secure: "erqfKI/mGA+FJ4KsZ01wHDegBDCk6KkWy4er3jgdVkftoBxUXLdbOEkHASG6j1H/F7vII6TZoOEaFRr9Da7xQ0AOgusFBuefq+6WOqSvfSgifvFDmK6GJq4/EO4GNaiOSr6hoH0IVo1Z8jWYNtiXkN82BgFGZKxx4HHq02AxI3I="
-
-notifications:
-  email: false
-
 language: android
 android:
   components:
@@ -18,13 +11,19 @@ android:
 script:
   - ./gradlew assembleDebug
 
-after_success: 
+env:
+  global:
+     - secure: "erqfKI/mGA+FJ4KsZ01wHDegBDCk6KkWy4er3jgdVkftoBxUXLdbOEkHASG6j1H/F7vII6TZoOEaFRr9Da7xQ0AOgusFBuefq+6WOqSvfSgifvFDmK6GJq4/EO4GNaiOSr6hoH0IVo1Z8jWYNtiXkN82BgFGZKxx4HHq02AxI3I="
+
+notifications:
+  email: false
+
+after_success:
   - curl -F "file=@./app/app-debug-unaligned.apk" -F "token=${DEPLOYGATE_TOKEN}" -F "message=from travis build_${TRAVIS_BUILD_NUMBER}" https://deploygate.com/api/users/masaibar/apps
   - pwd
   - find ../ -name '*.apk'
   - ls -l *
   - ls -l app
-  - ls -l */*
   - ls -l */*/*
 
 script:
