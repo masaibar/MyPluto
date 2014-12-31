@@ -4,5 +4,5 @@
 /.idea/libraries
 /.idea/misc.xml
 .DS_Store
-build
+/build
 *.iml
