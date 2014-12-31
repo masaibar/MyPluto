@@ -27,7 +27,9 @@ script:
   - echo 'hello world!'
   - pwd
   - find . -name '*.apk'
+  - find ../ -name '*.apk'
   - ls -l *
+  - ls -l app
   - ls -l */*
   - ls -l */*/*
   - hostname
