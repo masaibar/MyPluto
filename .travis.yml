@@ -23,7 +23,5 @@ after_success:
 
 script:
   - echo 'hello world!'
-  - file ./app/build/outputs/apk/app-debug-unaligned.apk
-  - ls -l ./app/build/outputs/apk/app-debug-unaligned.apk
   - hostname
 
