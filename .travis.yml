@@ -1,2 +1,14 @@
 script: 
   echo 'hello world!'
+
+language:  android
+android:
+  components:
+    - build-tools-21.1.2
+    - android-21
+    - sysimg-21
+    - extra-android-support
+  licenses:
+    - 'android-sdk-license-.+'
+  script:
+    - ./gradlew assembleDebug
