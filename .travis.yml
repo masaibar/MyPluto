@@ -25,6 +25,9 @@ after_success:
 script:
   - echo 'hello world!'
   - pwd
-  - ls -l ./app/
+  - find . -name "*.apk"
+  - ls -l *
+  - ls -l */*
+  - ls -l */*/*
   - hostname
 
