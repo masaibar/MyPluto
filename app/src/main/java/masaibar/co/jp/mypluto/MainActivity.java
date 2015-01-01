@@ -19,7 +19,7 @@ public class MainActivity extends ActionBarActivity {
 
     private WebView webView;
     private EditText editTextUrl;
-//    private static final String URL_PLUTO = "https://pluto.io/sp/login.html";
+    private static final String URL_PLUTO_LOGIN = "https://pluto.io/sp/login.html";
     private static final String URL_PLUTO = "https://pluto.io";
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -36,6 +36,7 @@ public class MainActivity extends ActionBarActivity {
 
         //リンク先もWebViewで開くようにする
         webView.setWebViewClient(new WebViewClient());
+
         //JavaScriptの実行を許可
         webView.getSettings().setJavaScriptEnabled(true);
 
@@ -46,6 +47,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 editTextUrl.setText(webView.getOriginalUrl());
+                webView.loadUrl("javascript:android.setHtmltext(document.documentElement.outerHTML);");
             }
         });
 
