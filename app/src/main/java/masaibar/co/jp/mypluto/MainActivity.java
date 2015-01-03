@@ -2,9 +2,8 @@ package masaibar.co.jp.mypluto;
 
 import android.annotation.SuppressLint;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Intent;
-import android.support.v4.app.NotificationCompat;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,10 +13,12 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 
+import masaibar.co.jp.mypluto.Service.SendNotification;
+
 
 public class MainActivity extends ActionBarActivity {
 
-    private WebView webView;
+    private WebView mWebView;
     private EditText editTextUrl;
     private static final String URL_PLUTO_LOGIN = "https://pluto.io/sp/login.html";
     private static final String URL_PLUTO = "https://pluto.io";
@@ -32,34 +33,32 @@ public class MainActivity extends ActionBarActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         editTextUrl = (EditText) findViewById((R.id.editText));
-        webView = (WebView) findViewById(R.id.webView);
+        mWebView = (WebView) findViewById(R.id.webView);
 
         //リンク先もWebViewで開くようにする
-        webView.setWebViewClient(new WebViewClient());
+        mWebView.setWebViewClient(new WebViewClient());
 
         //JavaScriptの実行を許可
-        webView.getSettings().setJavaScriptEnabled(true);
+        mWebView.getSettings().setJavaScriptEnabled(true);
 
-        webView.loadUrl(URL_PLUTO);
+        mWebView.loadUrl(URL_PLUTO);
 
         //webViewの表示しているURLを表示
-        webView.setWebViewClient(new WebViewClient() {
+        mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                editTextUrl.setText(webView.getOriginalUrl());
-                webView.loadUrl("javascript:android.setHtmltext(document.documentElement.outerHTML);");
+                editTextUrl.setText(mWebView.getOriginalUrl());
+                mWebView.loadUrl("javascript:android.setHtmltext(document.documentElement.outerHTML);");
             }
         });
 
-        //未ログインだったらログイン画面に遷移させられないだろうか
-
-        sendNotification();
+        //未ログインだったらログイン画面に遷移させられないだろうか Todo
     }
     //戻るボタンの挙動をOverride
     @Override
     public void onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack();
+        if (mWebView.canGoBack()) {
+            mWebView.goBack();
             return;
         }
         super.onBackPressed();
@@ -73,48 +72,76 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem notificationSetting = menu.findItem(R.id.always_show_notification);
+        notificationSetting.setChecked(getNotificationState());
+        return super.onPrepareOptionsMenu(menu);
+    }
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_reload:
+                onReloadPressed();
+                break;
+
+            case R.id.always_show_notification:
+                onNotificationSettingPressed(item);
+                break;
+
+            case R.id.action_settings:
+                onSettingPressed();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    //あとで切り離す
-    public void sendNotification() {
-        //Intentの生成
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 , intent, 0);
+    //リロードボタン押下時の処理
+    public void onReloadPressed() {
+        mWebView.reload();
+    }
 
-        //Notificationインスタンスの生成
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+    //設定ボタン押下時の処理 設定画面に遷移させる
+    public void onSettingPressed() {
+        Intent intent = new Intent(this, SettingActivity.class);
+        startActivity(intent);
+    }
 
-        //ステータスバーに表示する設定を行う
-        builder.setSmallIcon(android.R.drawable.star_big_on);
-        builder.setTicker("Do you need Pluto?");
+    //設定切り替えボタン押下時の処理
+    public void onNotificationSettingPressed(MenuItem item) {
+        //チェックボックスの状態変更を行う
+        item.setChecked(!item.isChecked());
+        //反映後の状態を記憶する
+        setNotificationState(item.isChecked());
+        //状態によって通知を出す、消す
+        if (item.isChecked()) {
+            enableNotification();
+        } else {
+            disableNotification();
+        }
+    }
 
-        //通知領域に表示する設定を行う
-        builder.setContentTitle("Plutoで家電を操作しますか？");
-        builder.setContentText("こちらから開けます");
+    public boolean getNotificationState() {
+        SharedPreferences preferences = getSharedPreferences("MyPlutoPreference", MODE_PRIVATE);
+        return preferences.getBoolean("notificationState", false);
+    }
 
-        builder.addAction(R.drawable.ic_launcher, "開く", pendingIntent);
-        builder.addAction(R.drawable.ic_launcher, "あとで", pendingIntent);
-        builder.addAction(R.drawable.ic_launcher, "だまれ", pendingIntent);
+    public void setNotificationState(Boolean state) {
+        SharedPreferences preferences = getSharedPreferences("MyPlutoPreference", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("notificationState", state);
+        editor.commit();
+    }
 
-        builder.setContentIntent(pendingIntent);
-        builder.setWhen(System.currentTimeMillis());
-        //通知エリアに残す
-        builder.setAutoCancel(false);
+    public void enableNotification() {
+        Intent intent = new Intent(this, SendNotification.class);
+        startService(intent);
+    }
 
-        //通知の実行
+    public void disableNotification() {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(0 , builder.build());
+        notificationManager.cancel(MyPlutoNotificationIds.ALWAYS_NOTIFICATION);
     }
 }
