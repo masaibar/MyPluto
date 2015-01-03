@@ -1,6 +1,7 @@
 package masaibar.co.jp.mypluto;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
@@ -63,17 +64,6 @@ public class MainActivity extends ActionBarActivity {
         super.onBackPressed();
     }
 
-    //リロードボタン押下時の処理
-    public void onReloadPressed() {
-        mWebView.reload();
-    }
-
-    //設定ボタン押下時の処理 設定画面に遷移させる
-    public void onSettingPressed() {
-        Intent intent = new Intent(this, SettingActivity.class);
-        startActivity(intent);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -86,6 +76,51 @@ public class MainActivity extends ActionBarActivity {
         MenuItem notificationSetting = menu.findItem(R.id.always_show_notification);
         notificationSetting.setChecked(getNotificationState());
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_reload:
+                onReloadPressed();
+                break;
+
+            case R.id.always_show_notification:
+                onNotificationSettingPressed(item);
+                break;
+
+            case R.id.action_settings:
+                onSettingPressed();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    //リロードボタン押下時の処理
+    public void onReloadPressed() {
+        mWebView.reload();
+    }
+
+    //設定ボタン押下時の処理 設定画面に遷移させる
+    public void onSettingPressed() {
+        Intent intent = new Intent(this, SettingActivity.class);
+        startActivity(intent);
+    }
+
+    //設定切り替えボタン押下時の処理
+    public void onNotificationSettingPressed(MenuItem item) {
+        //チェックボックスの状態変更を行う
+        item.setChecked(!item.isChecked());
+        //反映後の状態を記憶する
+        setNotificationState(item.isChecked());
+        //状態によって通知を出す、消す
+        if (item.isChecked()) {
+            enableNotification();
+        } else {
+            disableNotification();
+        }
     }
 
     public boolean getNotificationState() {
@@ -105,30 +140,8 @@ public class MainActivity extends ActionBarActivity {
         startService(intent);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.action_reload:
-                onReloadPressed();
-                break;
-
-            //メニューでチェックボックスを選択した時の挙動
-            case R.id.always_show_notification:
-                //チェックボックスの状態変更を行う
-                item.setChecked(!item.isChecked());
-                //反映後の状態を記憶する
-                setNotificationState(item.isChecked());
-                if (item.isChecked()) {
-                    enableNotification();
-                }
-                break;
-
-            case R.id.action_settings:
-                onSettingPressed();
-                break;
-        }
-
-        return super.onOptionsItemSelected(item);
+    public void disableNotification() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.cancel(MyPlutoNotificationIds.ALWAYS_NOTIFICATION);
     }
 }

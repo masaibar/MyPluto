@@ -7,6 +7,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import masaibar.co.jp.mypluto.MainActivity;
 import masaibar.co.jp.mypluto.R;
+import masaibar.co.jp.mypluto.MyPlutoNotificationIds;
 
 /**
  * Created by masaibar on 2015/01/03.
@@ -59,6 +60,6 @@ public class SendNotification extends Service{
 
         //通知の実行
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(0 , builder.build());
+        notificationManager.notify(MyPlutoNotificationIds.ALWAYS_NOTIFICATION , builder.build());
     }
 }

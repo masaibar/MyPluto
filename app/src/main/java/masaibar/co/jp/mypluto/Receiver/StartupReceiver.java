@@ -13,6 +13,7 @@ public class StartupReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
+        //boot時であること 且つ 通知を出す設定になっていることを確認
         if(Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction()) && checkNotificationState(context)){
             context.startService(new Intent(context, SendNotification.class));
         }
