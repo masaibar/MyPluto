@@ -4,5 +4,11 @@
     <string name="app_name">MyPluto</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="always_show_notification">常に通知領域に表示する</string>
+    <string name="action_reload">ページを再読み込み</string>
+    <string name="title_activity_setting">SettingActivity</string>
+    <string name="notification_ticker">いつでも家電を操作できます。</string>
+    <string name="notification_title">MyPluto</string>
+    <string name="notification_text">今すぐ家電を操作</string>
 
 </resources>

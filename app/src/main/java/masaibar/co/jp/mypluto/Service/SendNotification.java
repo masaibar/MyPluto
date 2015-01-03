@@ -1,13 +1,13 @@
 package masaibar.co.jp.mypluto.Service;
-
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-
 import masaibar.co.jp.mypluto.MainActivity;
+import masaibar.co.jp.mypluto.R;
+import masaibar.co.jp.mypluto.MyPlutoNotificationIds;
 
 /**
  * Created by masaibar on 2015/01/03.
@@ -46,22 +46,20 @@ public class SendNotification extends Service{
 
         //ステータスバーに表示する設定を行う
         builder.setSmallIcon(android.R.drawable.star_big_on);
-        builder.setTicker("Do you need Pluto?");
+        builder.setTicker(getString(R.string.notification_ticker));
 
         //通知領域に表示する設定を行う
-        builder.setContentTitle("Plutoで家電を操作しますか？");
-        builder.setContentText("こちらから開けます");
-
-//        builder.addAction(R.drawable.ic_launcher, "開く", pendingIntent);
-//        builder.addAction(R.drawable.ic_launcher, "あとで", pendingIntent);
+        builder.setContentTitle(getString(R.string.notification_title));
+        builder.setContentText(getString(R.string.notification_text));
 
         builder.setContentIntent(pendingIntent);
         builder.setWhen(System.currentTimeMillis());
         //通知エリアに残す
-        builder.setAutoCancel(false);
+        //builder.setAutoCancel(false);
+        builder.setOngoing(true);
 
         //通知の実行
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(0 , builder.build());
+        notificationManager.notify(MyPlutoNotificationIds.ALWAYS_NOTIFICATION , builder.build());
     }
 }
