@@ -6,13 +6,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.webkit.CookieManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 
+import masaibar.co.jp.mypluto.AsyncTask.AsyncHttpRequest;
 import masaibar.co.jp.mypluto.Service.SendNotification;
 
 
@@ -20,6 +24,7 @@ public class MainActivity extends ActionBarActivity {
 
     private WebView mWebView;
     private EditText editTextUrl;
+    private String mCookie;
     private static final String URL_PLUTO_LOGIN = "https://pluto.io/sp/login.html";
     private static final String URL_PLUTO = "https://pluto.io";
 
@@ -49,6 +54,11 @@ public class MainActivity extends ActionBarActivity {
             public void onPageFinished(WebView view, String url) {
                 editTextUrl.setText(mWebView.getOriginalUrl());
                 mWebView.loadUrl("javascript:android.setHtmltext(document.documentElement.outerHTML);");
+                CookieManager cookieManager = CookieManager.getInstance();
+                mCookie = cookieManager.getCookie(url);
+
+                Log.d("masaibar debug", mCookie);
+                execAsync(view);
             }
         });
 
@@ -98,6 +108,12 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    //Asyncの実行
+    public void execAsync(View view) {
+        AsyncHttpRequest task = new AsyncHttpRequest(this, mCookie);
+        task.mActivity = this;
+        task.execute(URL_PLUTO);
+    }
     //リロードボタン押下時の処理
     public void onReloadPressed() {
         mWebView.reload();
