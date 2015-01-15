@@ -6,9 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import masaibar.co.jp.mypluto.Service.SendNotification;
 
-/**
- * Created by masaibar on 2015/01/03.
- */
 public class StartupReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {

@@ -2,8 +2,7 @@ package masaibar.co.jp.mypluto.AsyncTask;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ScrollView;
-import android.widget.TextView;
+import android.webkit.WebView;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -11,9 +10,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
-/**
- * Created by masaibar on 2015/01/11.
- */
+import masaibar.co.jp.mypluto.MainActivity;
+import masaibar.co.jp.mypluto.R;
+
 public class AsyncHttpRequest extends AsyncTask<String, Void, String> {
     public Activity mActivity;
     private String mCookie;
@@ -54,8 +53,12 @@ public class AsyncHttpRequest extends AsyncTask<String, Void, String> {
         String target = "THIS IS MAIN PAGE";
 
         boolean isLogin = mReceiveStr.contains(target);
-
         Log.d("masaibar debug", String.valueOf(isLogin));
+
+        if (!isLogin) {
+            WebView mWebView = (WebView) mActivity.findViewById(R.id.webView);
+            mWebView.loadUrl(MainActivity.URL_PLUTO_LOGIN);
+        }
     }
 }
 

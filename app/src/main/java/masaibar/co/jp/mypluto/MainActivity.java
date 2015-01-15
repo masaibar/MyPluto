@@ -15,6 +15,7 @@ import android.webkit.CookieManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import masaibar.co.jp.mypluto.AsyncTask.AsyncHttpRequest;
 import masaibar.co.jp.mypluto.Service.SendNotification;
@@ -25,8 +26,9 @@ public class MainActivity extends ActionBarActivity {
     private WebView mWebView;
     private EditText editTextUrl;
     private String mCookie;
-    private static final String URL_PLUTO_LOGIN = "https://pluto.io/sp/login.html";
-    private static final String URL_PLUTO = "https://pluto.io";
+    public static final String URL_PLUTO = "https://pluto.io";
+    public static final String URL_PLUTO_LOGIN = "https://pluto.io/sp/login.html";
+    public static final String URL_PLUTO_REGIST = "https://pluto.io/sp/new.html";
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -53,11 +55,17 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 editTextUrl.setText(mWebView.getOriginalUrl());
-                mWebView.loadUrl("javascript:android.setHtmltext(document.documentElement.outerHTML);");
+                //mWebView.loadUrl("javascript:android.setHtmltext(document.documentElement.outerHTML);");
                 CookieManager cookieManager = CookieManager.getInstance();
                 mCookie = cookieManager.getCookie(url);
 
                 Log.d("masaibar debug", mCookie);
+                Log.d("masaibar debug url", url);
+                Log.d("masaibar debug url", URL_PLUTO_LOGIN);
+                if (url.equals(URL_PLUTO_LOGIN) || url.equals(URL_PLUTO_REGIST)) {
+                    return;
+                }
+                Toast.makeText(getApplicationContext(), "ログイン画面にリダイレクトします", Toast.LENGTH_SHORT).show();
                 execAsync(view);
             }
         });
@@ -111,7 +119,7 @@ public class MainActivity extends ActionBarActivity {
     //Asyncの実行
     public void execAsync(View view) {
         AsyncHttpRequest task = new AsyncHttpRequest(this, mCookie);
-        task.mActivity = this;
+//        task.mActivity = this;
         task.execute(URL_PLUTO);
     }
     //リロードボタン押下時の処理
