@@ -9,9 +9,6 @@ import masaibar.co.jp.mypluto.MainActivity;
 import masaibar.co.jp.mypluto.R;
 import masaibar.co.jp.mypluto.MyPlutoNotificationIds;
 
-/**
- * Created by masaibar on 2015/01/03.
- */
 public class SendNotification extends Service{
 
     @Override

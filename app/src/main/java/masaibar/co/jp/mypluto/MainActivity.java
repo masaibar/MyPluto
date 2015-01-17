@@ -8,11 +8,14 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.webkit.CookieManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 
+import masaibar.co.jp.mypluto.AsyncTask.AsyncHttpRequest;
 import masaibar.co.jp.mypluto.Service.SendNotification;
 
 
@@ -20,8 +23,10 @@ public class MainActivity extends ActionBarActivity {
 
     private WebView mWebView;
     private EditText editTextUrl;
-    private static final String URL_PLUTO_LOGIN = "https://pluto.io/sp/login.html";
-    private static final String URL_PLUTO = "https://pluto.io";
+    private String mCookie;
+    public static final String URL_PLUTO = "https://pluto.io";
+    public static final String URL_PLUTO_LOGIN = "https://pluto.io/sp/login.html";
+    public static final String URL_PLUTO_REGIST = "https://pluto.io/sp/new.html";
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -48,7 +53,16 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 editTextUrl.setText(mWebView.getOriginalUrl());
-                mWebView.loadUrl("javascript:android.setHtmltext(document.documentElement.outerHTML);");
+                CookieManager cookieManager = CookieManager.getInstance();
+                mCookie = cookieManager.getCookie(url);
+
+                //Log.d("masaibar debug", mCookie);
+                //Log.d("masaibar debug url", url);
+                //Log.d("masaibar debug url", URL_PLUTO_LOGIN);
+                if (url.equals(URL_PLUTO_LOGIN) || url.equals(URL_PLUTO_REGIST)) {
+                    return;
+                }
+                execAsync(view);
             }
         });
 
@@ -66,7 +80,6 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -94,10 +107,14 @@ public class MainActivity extends ActionBarActivity {
                 onSettingPressed();
                 break;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
+    //Asyncの実行
+    public void execAsync(View view) {
+        AsyncHttpRequest task = new AsyncHttpRequest(getApplicationContext(), this, mCookie);
+        task.execute(URL_PLUTO);
+    }
     //リロードボタン押下時の処理
     public void onReloadPressed() {
         mWebView.reload();
