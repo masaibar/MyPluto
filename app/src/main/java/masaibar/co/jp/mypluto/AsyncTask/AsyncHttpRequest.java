@@ -1,8 +1,9 @@
 package masaibar.co.jp.mypluto.AsyncTask;
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.webkit.WebView;
+import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -17,8 +18,10 @@ public class AsyncHttpRequest extends AsyncTask<String, Void, String> {
     public Activity mActivity;
     private String mCookie;
     private String mReceiveStr;
+    private Context mContext;
 
-    public AsyncHttpRequest(Activity activity, String cookie) {
+    public AsyncHttpRequest(Context context, Activity activity, String cookie) {
+        mContext = context;
         mActivity = activity;
         mCookie = cookie;
     }
@@ -48,14 +51,12 @@ public class AsyncHttpRequest extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-//        TextView textView =  (TextView) owner.findViewById(R.id.textView);
-//        textView.setText(mReceiveStr);
         String target = "THIS IS MAIN PAGE";
 
         boolean isLogin = mReceiveStr.contains(target);
-        Log.d("masaibar debug", String.valueOf(isLogin));
 
         if (!isLogin) {
+            Toast.makeText(mContext, "ログイン画面にリダイレクトします", Toast.LENGTH_SHORT).show();
             WebView mWebView = (WebView) mActivity.findViewById(R.id.webView);
             mWebView.loadUrl(MainActivity.URL_PLUTO_LOGIN);
         }
